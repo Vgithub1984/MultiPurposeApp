@@ -380,7 +380,7 @@ struct ContentView: View {
                         focusedField = isLogin ? .email : .firstName
                     }
                 }
-                .onChange(of: isLogin) { newValue in
+                .onChange(of: isLogin) { _, newValue in
                     DispatchQueue.main.async {
                         focusedField = newValue ? .email : .firstName
                     }

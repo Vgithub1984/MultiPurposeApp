@@ -119,7 +119,7 @@ class GitHubSyncService: ObservableObject {
             }
             
             if httpResponse.statusCode == 200 {
-                let user = try JSONDecoder().decode(GitHubUser.self, from: data)
+                let _ = try JSONDecoder().decode(GitHubUser.self, from: data)
                 DispatchQueue.main.async {
                     self.accessToken = token
                     self.isAuthenticated = true
@@ -340,5 +340,14 @@ struct BackupData: Codable {
     let deletedLists: [ListItem]
     let items: [String: [ListElement]] // listId -> items
     let timestamp: Date
-    let version: String = "1.0.0"
+    let version: String
+    
+    init(user: TempUser, lists: [ListItem], deletedLists: [ListItem], items: [String: [ListElement]], timestamp: Date) {
+        self.user = user
+        self.lists = lists
+        self.deletedLists = deletedLists
+        self.items = items
+        self.timestamp = timestamp
+        self.version = "1.0.0"
+    }
 } 

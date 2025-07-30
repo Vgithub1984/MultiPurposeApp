@@ -917,7 +917,7 @@ struct ListCardView: View {
         .onAppear {
             loadCachedItems()
         }
-        .onChange(of: refreshKey) { _ in
+        .onChange(of: refreshKey) { _, _ in
             loadCachedItems()
         }
     }
@@ -1165,6 +1165,26 @@ struct StatisticsCache {
     let overallCompletionRate: Double
     let listsWithItemsCount: Int
     let averageItemsPerList: Double
+    
+    // Default initializer for empty state
+    init() {
+        self.activeListCount = 0
+        self.totalItemsCount = 0
+        self.completedItemsCount = 0
+        self.overallCompletionRate = 0
+        self.listsWithItemsCount = 0
+        self.averageItemsPerList = 0
+    }
+    
+    // Custom initializer
+    init(activeListCount: Int, totalItemsCount: Int, completedItemsCount: Int, overallCompletionRate: Double, listsWithItemsCount: Int, averageItemsPerList: Double) {
+        self.activeListCount = activeListCount
+        self.totalItemsCount = totalItemsCount
+        self.completedItemsCount = completedItemsCount
+        self.overallCompletionRate = overallCompletionRate
+        self.listsWithItemsCount = listsWithItemsCount
+        self.averageItemsPerList = averageItemsPerList
+    }
     
     static func calculate(from lists: [ListItem]) -> StatisticsCache {
         var totalItems = 0
