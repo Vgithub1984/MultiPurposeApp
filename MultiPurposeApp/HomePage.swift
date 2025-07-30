@@ -37,64 +37,31 @@ struct HomePage: View {
         deletedLists.sorted { $0.createdAt > $1.createdAt }
     }
     
+    // MARK: - Cached Statistics Properties
+    @State private var cachedStats: StatisticsCache = StatisticsCache()
+    
     var activeListCount: Int {
-        lists.reduce(0) { count, list in
-            guard let data = UserDefaults.standard.data(forKey: "items_\(list.id.uuidString)") else {
-                return count
-            }
-            if let decoded = try? JSONDecoder().decode([ListElement].self, from: data), !decoded.isEmpty {
-                return count + 1
-            }
-            return count
-        }
+        cachedStats.activeListCount
     }
     
-    // MARK: - Statistics Computed Properties
-    
     var totalItemsCount: Int {
-        lists.reduce(0) { count, list in
-            guard let data = UserDefaults.standard.data(forKey: "items_\(list.id.uuidString)") else {
-                return count
-            }
-            if let decoded = try? JSONDecoder().decode([ListElement].self, from: data) {
-                return count + decoded.count
-            }
-            return count
-        }
+        cachedStats.totalItemsCount
     }
     
     var completedItemsCount: Int {
-        lists.reduce(0) { count, list in
-            guard let data = UserDefaults.standard.data(forKey: "items_\(list.id.uuidString)") else {
-                return count
-            }
-            if let decoded = try? JSONDecoder().decode([ListElement].self, from: data) {
-                return count + decoded.filter { $0.purchased }.count
-            }
-            return count
-        }
+        cachedStats.completedItemsCount
     }
     
     var overallCompletionRate: Double {
-        guard totalItemsCount > 0 else { return 0 }
-        return Double(completedItemsCount) / Double(totalItemsCount)
+        cachedStats.overallCompletionRate
     }
     
     var listsWithItemsCount: Int {
-        lists.reduce(0) { count, list in
-            guard let data = UserDefaults.standard.data(forKey: "items_\(list.id.uuidString)") else {
-                return count
-            }
-            if let decoded = try? JSONDecoder().decode([ListElement].self, from: data), !decoded.isEmpty {
-                return count + 1
-            }
-            return count
-        }
+        cachedStats.listsWithItemsCount
     }
     
     var averageItemsPerList: Double {
-        guard lists.count > 0 else { return 0 }
-        return Double(totalItemsCount) / Double(lists.count)
+        cachedStats.averageItemsPerList
     }
     
     var mostRecentList: ListItem? {
@@ -413,9 +380,10 @@ struct HomePage: View {
                                     .font(.title2)
                                     .bold()
                                 
-                                Text(user.userId)
+                                /*Text(user.userId)
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
+                                 */
                             }
                             .padding(.top, 20)
                             
@@ -724,6 +692,9 @@ struct HomePage: View {
         // Save lists to UserDefaults
         saveLists()
         
+        // Update statistics
+        updateStatistics()
+        
         // Clear input and dismiss sheet
         newListName = ""
         showAddListSheet = false
@@ -758,15 +729,27 @@ struct HomePage: View {
     private func loadLists() {
         guard let data = UserDefaults.standard.data(forKey: "lists_\(user.userId)") else {
             lists = []
+            updateStatistics()
             return
         }
         
         do {
             let decoded = try JSONDecoder().decode([ListItem].self, from: data)
             lists = decoded
+            updateStatistics()
         } catch {
             print("Failed to load lists: \(error)")
             lists = []
+            updateStatistics()
+        }
+    }
+    
+    private func updateStatistics() {
+        DispatchQueue.global(qos: .userInitiated).async {
+            let stats = StatisticsCache.calculate(from: self.lists)
+            DispatchQueue.main.async {
+                self.cachedStats = stats
+            }
         }
     }
     
@@ -793,6 +776,8 @@ struct HomePage: View {
         // Save updated lists and deleted lists
         saveLists()
         saveDeletedLists()
+        // Update statistics
+        updateStatistics()
         // Refresh UI
         listsNeedRefresh.toggle()
     }
@@ -805,6 +790,8 @@ struct HomePage: View {
         // Save updated lists and deleted lists
         saveLists()
         saveDeletedLists()
+        // Update statistics
+        updateStatistics()
         // Refresh UI
         listsNeedRefresh.toggle()
     }
@@ -838,6 +825,8 @@ struct HomePage: View {
             }
         }
         
+        // Update statistics
+        updateStatistics()
         // Refresh UI
         listsNeedRefresh.toggle()
     }
@@ -860,6 +849,8 @@ struct HomePage: View {
             }
         }
         
+        // Update statistics
+        updateStatistics()
         // Refresh UI
         listsNeedRefresh.toggle()
     }
@@ -869,30 +860,18 @@ struct HomePage: View {
 struct ListCardView: View {
     let list: ListItem
     let refreshKey: Bool
+    @State private var cachedItems: [ListElement] = []
     
     private var hasItems: Bool {
-        guard let data = UserDefaults.standard.data(forKey: "items_\(list.id.uuidString)") else {
-            return false
-        }
-        if let decoded = try? JSONDecoder().decode([ListElement].self, from: data) {
-            return !decoded.isEmpty
-        }
-        return false
+        !cachedItems.isEmpty
     }
     
     private var itemsCount: Int {
-        guard let data = UserDefaults.standard.data(forKey: "items_\(list.id.uuidString)") else { return 0 }
-        if let decoded = try? JSONDecoder().decode([ListElement].self, from: data) {
-            return decoded.count
-        }
-        return 0
+        cachedItems.count
     }
+    
     private var purchasedCount: Int {
-        guard let data = UserDefaults.standard.data(forKey: "items_\(list.id.uuidString)") else { return 0 }
-        if let decoded = try? JSONDecoder().decode([ListElement].self, from: data) {
-            return decoded.filter { $0.purchased }.count
-        }
-        return 0
+        cachedItems.filter { $0.purchased }.count
     }
     
     var body: some View {
@@ -935,6 +914,21 @@ struct ListCardView: View {
             RoundedRectangle(cornerRadius: 12)
                 .stroke(Color.gray.opacity(0.2), lineWidth: 1)
         )
+        .onAppear {
+            loadCachedItems()
+        }
+        .onChange(of: refreshKey) { _ in
+            loadCachedItems()
+        }
+    }
+    
+    private func loadCachedItems() {
+        if let data = UserDefaults.standard.data(forKey: "items_\(list.id.uuidString)"),
+           let items = try? JSONDecoder().decode([ListElement].self, from: data) {
+            cachedItems = items
+        } else {
+            cachedItems = []
+        }
     }
 }
 
@@ -1054,21 +1048,14 @@ struct ActivityStatCard: View {
 
 struct RecentListCard: View {
     let list: ListItem
+    @State private var cachedItems: [ListElement] = []
     
     private var itemsCount: Int {
-        guard let data = UserDefaults.standard.data(forKey: "items_\(list.id.uuidString)") else { return 0 }
-        if let decoded = try? JSONDecoder().decode([ListElement].self, from: data) {
-            return decoded.count
-        }
-        return 0
+        cachedItems.count
     }
     
     private var purchasedCount: Int {
-        guard let data = UserDefaults.standard.data(forKey: "items_\(list.id.uuidString)") else { return 0 }
-        if let decoded = try? JSONDecoder().decode([ListElement].self, from: data) {
-            return decoded.filter { $0.purchased }.count
-        }
-        return 0
+        cachedItems.filter { $0.purchased }.count
     }
     
     var body: some View {
@@ -1110,6 +1097,18 @@ struct RecentListCard: View {
             RoundedRectangle(cornerRadius: 12)
                 .stroke(Color.green.opacity(0.3), lineWidth: 1)
         )
+        .onAppear {
+            loadCachedItems()
+        }
+    }
+    
+    private func loadCachedItems() {
+        if let data = UserDefaults.standard.data(forKey: "items_\(list.id.uuidString)"),
+           let items = try? JSONDecoder().decode([ListElement].self, from: data) {
+            cachedItems = items
+        } else {
+            cachedItems = []
+        }
     }
 }
 
@@ -1153,6 +1152,50 @@ struct DeletedSummaryCard: View {
         .overlay(
             RoundedRectangle(cornerRadius: 12)
                 .stroke(Color.red.opacity(0.3), lineWidth: 1)
+        )
+    }
+}
+
+// MARK: - Statistics Cache
+
+struct StatisticsCache {
+    let activeListCount: Int
+    let totalItemsCount: Int
+    let completedItemsCount: Int
+    let overallCompletionRate: Double
+    let listsWithItemsCount: Int
+    let averageItemsPerList: Double
+    
+    static func calculate(from lists: [ListItem]) -> StatisticsCache {
+        var totalItems = 0
+        var completedItems = 0
+        var activeLists = 0
+        var listsWithItems = 0
+        
+        for list in lists {
+            if let data = UserDefaults.standard.data(forKey: "items_\(list.id.uuidString)"),
+               let items = try? JSONDecoder().decode([ListElement].self, from: data) {
+                
+                totalItems += items.count
+                completedItems += items.filter { $0.purchased }.count
+                
+                if !items.isEmpty {
+                    activeLists += 1
+                    listsWithItems += 1
+                }
+            }
+        }
+        
+        let completionRate = totalItems > 0 ? Double(completedItems) / Double(totalItems) : 0
+        let averageItems = lists.count > 0 ? Double(totalItems) / Double(lists.count) : 0
+        
+        return StatisticsCache(
+            activeListCount: activeLists,
+            totalItemsCount: totalItems,
+            completedItemsCount: completedItems,
+            overallCompletionRate: completionRate,
+            listsWithItemsCount: listsWithItems,
+            averageItemsPerList: averageItems
         )
     }
 }
