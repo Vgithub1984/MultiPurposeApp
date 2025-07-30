@@ -1,0 +1,90 @@
+name: iOS CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Select Xcode
+      run: sudo xcode-select -switch /Applications/Xcode_15.0.app
+      
+    - name: Build and test
+      run: |
+        xcodebuild test \
+          -project MultiPurposeApp.xcodeproj \
+          -scheme MultiPurposeApp \
+          -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' \
+          -enableCodeCoverage YES \
+          | xcpretty
+          
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: ios
+        name: ios-coverage
+
+  build:
+    runs-on: macos-latest
+    needs: test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Select Xcode
+      run: sudo xcode-select -switch /Applications/Xcode_15.0.app
+      
+    - name: Build for release
+      run: |
+        xcodebuild archive \
+          -project MultiPurposeApp.xcodeproj \
+          -scheme MultiPurposeApp \
+          -archivePath MultiPurposeApp.xcarchive \
+          -destination generic/platform=iOS \
+          | xcpretty
+          
+    - name: Export IPA
+      run: |
+        xcodebuild -exportArchive \
+          -archivePath MultiPurposeApp.xcarchive \
+          -exportPath ./build \
+          -exportOptionsPlist exportOptions.plist
+          
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: MultiPurposeApp-IPA
+        path: ./build/MultiPurposeApp.ipa
+
+  deploy:
+    runs-on: macos-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Download build artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: MultiPurposeApp-IPA
+        path: ./build
+        
+    - name: Deploy to TestFlight
+      run: |
+        echo "Deploy to TestFlight would happen here"
+        echo "Configure App Store Connect API keys in repository secrets"
+        echo "APP_STORE_CONNECT_API_KEY"
+        echo "APP_STORE_CONNECT_API_KEY_ID" 
+        echo "APP_STORE_CONNECT_ISSUER_ID" 
