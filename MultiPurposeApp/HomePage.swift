@@ -27,6 +27,7 @@ struct HomePage: View {
     @State private var pendingRestoreList: ListItem? = nil
     @State private var pendingPermanentDeleteList: ListItem? = nil
     @State private var showGitHubSync: Bool = false
+    @State private var showiCloudSync: Bool = false
     
     var sortedLists: [ListItem] {
         lists.sorted { $0.createdAt > $1.createdAt }
@@ -449,34 +450,38 @@ struct HomePage: View {
                         }
                         .padding(.horizontal)
                         
-                        // GitHub Sync Section
+                                                // Data Backup Section
                         VStack(alignment: .leading, spacing: 16) {
                             Text("Data Backup")
                                 .font(.headline)
                                 .bold()
                                 .padding(.horizontal)
                             
-                            Button {
-                                showGitHubSync = true
-                            } label: {
-                                HStack {
-                                    Image(systemName: "cloud.and.arrow.up")
-                                        .font(.title2)
-                                        .foregroundColor(.blue)
-                                    
-                                    VStack(alignment: .leading) {
-                                        Text("GitHub Sync")
-                                            .font(.headline)
-                                        Text("Backup and restore your data")
+                            VStack(spacing: 12) {
+                                // GitHub Sync Button
+                                Button {
+                                    showGitHubSync = true
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "cloud.and.arrow.up")
+                                            .font(.title2)
+                                            .foregroundColor(.blue)
+                                        
+                                        VStack(alignment: .leading) {
+                                            Text("GitHub Sync")
+                                                .font(.headline)
+                                            Text("Manual backup to GitHub")
                                             .font(.caption)
                                             .foregroundColor(.secondary)
+                                        }
+                                        
+                                        Spacer()
+                                        
+                                        Image(systemName: "chevron.right")
+                                            .foregroundColor(.secondary)
                                     }
-                                    
-                                    Spacer()
-                                    
-                                    Image(systemName: "chevron.right")
-                                        .foregroundColor(.secondary)
                                 }
+                                .buttonStyle(.plain)
                                 .padding()
                                 .background(Color(.systemBackground))
                                 .cornerRadius(12)
@@ -484,8 +489,39 @@ struct HomePage: View {
                                     RoundedRectangle(cornerRadius: 12)
                                         .stroke(Color.blue.opacity(0.3), lineWidth: 1)
                                 )
+                                
+                                // iCloud Sync Button
+                                Button {
+                                    showiCloudSync = true
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "icloud")
+                                            .font(.title2)
+                                            .foregroundColor(.green)
+                                        
+                                        VStack(alignment: .leading) {
+                                            Text("iCloud Sync")
+                                                .font(.headline)
+                                            Text("Automatic sync across devices")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                        }
+                                        
+                                        Spacer()
+                                        
+                                        Image(systemName: "chevron.right")
+                                            .foregroundColor(.secondary)
+                                    }
+                                }
+                                .buttonStyle(.plain)
+                                .padding()
+                                .background(Color(.systemBackground))
+                                .cornerRadius(12)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color.green.opacity(0.3), lineWidth: 1)
+                                )
                             }
-                            .buttonStyle(.plain)
                             .padding(.horizontal)
                         }
                         
@@ -666,6 +702,16 @@ struct HomePage: View {
                 }
             )
         }
+        .sheet(isPresented: $showiCloudSync) {
+            iCloudSyncView(
+                user: user,
+                lists: lists,
+                deletedLists: deletedLists,
+                onDataRestored: { appData in
+                    restoreFromiCloud(appData)
+                }
+            )
+        }
     }
     
     private func createNewList() {
@@ -787,6 +833,28 @@ struct HomePage: View {
         
         // Restore items for each list
         for (listId, items) in backupData.items {
+            if let encoded = try? JSONEncoder().encode(items) {
+                UserDefaults.standard.set(encoded, forKey: "items_\(listId)")
+            }
+        }
+        
+        // Refresh UI
+        listsNeedRefresh.toggle()
+    }
+    
+    // MARK: - iCloud Sync
+    
+    private func restoreFromiCloud(_ appData: AppData) {
+        // Restore lists
+        lists = appData.lists
+        saveLists()
+        
+        // Restore deleted lists
+        deletedLists = appData.deletedLists
+        saveDeletedLists()
+        
+        // Restore items for each list
+        for (listId, items) in appData.items {
             if let encoded = try? JSONEncoder().encode(items) {
                 UserDefaults.standard.set(encoded, forKey: "items_\(listId)")
             }
