@@ -1,5 +1,8 @@
 # MultiPurposeApp - Technical Documentation
 
+**Last Updated**: July 31, 2025  
+**Version**: 1.0.0 (MVP)
+
 ## Table of Contents
 1. [Project Overview](#project-overview)
 2. [Technical Architecture](#technical-architecture)
@@ -28,6 +31,7 @@
 
 ### Technical Stack
 - **Frontend**: SwiftUI with Combine
+- **Design System**: ColorTheme with dark mode support
 - **Data Storage**: UserDefaults + Cloud Sync
 - **Network**: URLSession with async/await
 - **Architecture**: MVVM pattern
@@ -497,6 +501,34 @@ func backupData(user: TempUser, lists: [ListItem], deletedLists: [ListItem]) asy
 
 ## UI/UX Design System
 
+### ColorTheme System
+**Purpose**: Comprehensive design system providing consistent colors, gradients, and styling across the app.
+
+**Key Features**:
+- **Dynamic Colors**: Automatic adaptation to light/dark mode
+- **Semantic Colors**: Success, warning, error, and info states
+- **Gradient System**: Primary and glass gradient effects
+- **Component Styling**: Pre-built styles for cards, buttons, and lists
+- **Accessibility**: High contrast ratios and proper color usage
+
+**Core Components**:
+```swift
+// Primary Colors
+ColorTheme.primary = Color.blue
+ColorTheme.secondary = Color.purple
+ColorTheme.accent = Color.orange
+
+// Semantic Colors
+ColorTheme.success = Color.green
+ColorTheme.warning = Color.orange
+ColorTheme.error = Color.red
+ColorTheme.info = Color.blue
+
+// Gradients
+ColorTheme.primaryGradient = LinearGradient(...)
+ColorTheme.glassGradient = LinearGradient(...)
+```
+
 ### Design Principles
 - **iOS Native**: Follows Apple's Human Interface Guidelines
 - **Accessibility**: Proper focus management and voice-over support
@@ -700,4 +732,5 @@ jobs:
 
 ---
 
-**MultiPurposeApp v1.0.0** - Technical documentation for a comprehensive iOS list management solution with cloud synchronization and advanced analytics. 
+**MultiPurposeApp v1.0.0** - Technical documentation for a comprehensive iOS list management solution with cloud synchronization and advanced analytics.  
+*Last Updated: July 31, 2025* 
