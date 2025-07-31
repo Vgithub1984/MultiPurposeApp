@@ -1,0 +1,66 @@
+flowchart TD
+  %% Nodes with styling
+  classDef screen fill:#f9f,stroke:#333,stroke-width:2px,color:#000,font-weight:bold;
+  classDef modal fill:#ffebcc,stroke:#d2691e,stroke-width:2px,color:#000,font-style:italic;
+  classDef alert fill:#ffe6e6,stroke:#cc0000,stroke-width:2px,color:#800000,font-weight:bold;
+  classDef endpoint fill:#cce5ff,stroke:#004085,stroke-width:3px,color:#004085,font-weight:bold;
+
+  %% Main flow nodes
+  A["📱 App Launch"]:::screen --> B["🏠 Landing Screen<br>(ContentView)"]:::screen
+  B --> C["➡️ Get Started → Authentication Sheet"]:::modal
+
+  %% Auth sheet splits
+  C --> D["🔐 Login"]:::modal
+  C --> E["📝 Sign Up"]:::modal
+
+  %% Successful auth leads to HomePage (TabView)
+  D --> F["🏡 HomePage<br>(TabView)"]:::screen
+  E --> F
+
+  %% HomePage tabs
+  subgraph Tabs ["Tab Bar"]
+    direction TB
+    F --> T1["📋 Lists Tab"]:::screen
+    F --> T2["🗑️ Deleted Tab"]:::screen
+    F --> T3["📊 Stats Tab"]:::screen
+    F --> T4["👤 Profile Tab"]:::screen
+  end
+
+  %% Lists Tab actions
+  T1 --> L1["📝 Tap List → ListItemsView<br>(Full Screen Cover)"]:::modal
+  T1 --> L2["➕ '+' Button → Create New List<br>(Sheet)"]:::modal
+  T1 --> L3["🗑️ Delete List → Delete Alert"]:::alert
+
+  %% Delete Alert moves list to Deleted Tab
+  L3 -->|Moves to Deleted Tab| T2
+
+  %% Deleted Tab actions
+  T2 --> D1["♻️ Restore → Restore Alert"]:::alert
+  T2 --> D2["❌ Permanently Delete → Delete Forever Alert"]:::alert
+
+  %% Restore Alert returns list to Lists Tab
+  D1 -->|Restores to Lists Tab| T1
+
+  %% Delete Forever Alert removes list completely
+  D2 -.->|Deletes forever| T2
+
+  %% Profile Tab actions
+  T4 --> P1["🔄 GitHub Sync → Sheet"]:::modal
+  T4 --> P2["☁️ iCloud Sync → Sheet"]:::modal
+  T4 --> P3["🚪 Logout → End"]:::modal
+
+  %% Sheets/Alerts go back to Origin
+  L1 --> T1
+  L2 --> T1
+  P1 --> T4
+  P2 --> T4
+  D3["Alert Confirmations"]:::alert -.-> T1
+  D1 --> T2
+  D2 --> T2
+
+  %% Logout endpoint
+  P3 --> END["🏁 Logout: End of Flow"]:::endpoint
+
+  %% Styling for arrows
+  linkStyle default stroke:#333,stroke-width:1.5px,fill:none,arrowhead=vee;
+
