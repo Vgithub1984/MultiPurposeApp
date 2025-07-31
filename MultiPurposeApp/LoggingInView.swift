@@ -6,7 +6,7 @@ struct LoggingInView: View {
     
     var body: some View {
         ZStack {
-            Color(.systemBackground)
+            Color.appBackground
                 .ignoresSafeArea()
             VStack(spacing: 20) {
       
@@ -15,7 +15,7 @@ struct LoggingInView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 90, height: 90)
-                        .foregroundColor(.green)
+                        .foregroundColor(Color.appSuccess)
                         .offset(x: walkOffset)
                         .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: false), value: animate)
                         .onAppear {
@@ -28,7 +28,7 @@ struct LoggingInView: View {
                 .frame(height: 90)
                 Text("")
                 ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+                    .progressViewStyle(CircularProgressViewStyle(tint: Color.appPrimary))
                     .scaleEffect(1.7)
                 Text("")
                 Text("Hold tight...")
@@ -36,7 +36,7 @@ struct LoggingInView: View {
                 Text("You are being logged into an Awesome App")
                     .font(.title)
                     .multilineTextAlignment(.center)
-                    .foregroundColor(.primary)
+                    .foregroundColor(Color.appPrimaryText)
             }
         }
         //.onAppear { animate = true } // Moved animate = true into GeometryReader's onAppear

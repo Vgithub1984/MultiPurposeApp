@@ -30,7 +30,7 @@ struct GitHubSyncView: View {
                     VStack(spacing: 8) {
                         Image(systemName: "cloud.and.arrow.up")
                             .font(.system(size: 60))
-                            .foregroundColor(.blue)
+                            .foregroundColor(Color.appPrimary)
                         
                         Text("GitHub Sync")
                             .font(.title)
@@ -54,10 +54,10 @@ struct GitHubSyncView: View {
                             VStack(spacing: 12) {
                                 HStack {
                                     Image(systemName: "checkmark.circle.fill")
-                                        .foregroundColor(.green)
+                                        .foregroundColor(Color.appSuccess)
                                     Text("Connected to GitHub")
                                         .font(.subheadline)
-                                        .foregroundColor(.green)
+                                        .foregroundColor(Color.appSuccess)
                                     Spacer()
                                 }
                                 
@@ -76,7 +76,7 @@ struct GitHubSyncView: View {
                                     syncService.logout()
                                 }
                                 .buttonStyle(.bordered)
-                                .foregroundColor(.red)
+                                .foregroundColor(Color.appError)
                             }
                             .padding()
                             .background(Color(.systemGray6))
@@ -101,7 +101,7 @@ struct GitHubSyncView: View {
                                     showTokenAlert = true
                                 }
                                 .font(.caption)
-                                .foregroundColor(.blue)
+                                .foregroundColor(Color.appPrimary)
                             }
                             .padding()
                             .background(Color(.systemGray6))
@@ -145,7 +145,7 @@ struct GitHubSyncView: View {
                                 .cornerRadius(12)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+                                        .stroke(Color.appPrimary.opacity(0.3), lineWidth: 1)
                                 )
                                 .disabled(syncService.isLoading)
                                 
@@ -176,7 +176,7 @@ struct GitHubSyncView: View {
                                 .cornerRadius(12)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.green.opacity(0.3), lineWidth: 1)
+                                        .stroke(Color.appSuccess.opacity(0.3), lineWidth: 1)
                                 )
                                 .disabled(syncService.isLoading)
                             }
@@ -204,25 +204,25 @@ struct GitHubSyncView: View {
                     case .success:
                         HStack {
                             Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.green)
+                                .foregroundColor(Color.appSuccess)
                             Text("Sync completed successfully")
                                 .font(.subheadline)
-                                .foregroundColor(.green)
+                                .foregroundColor(Color.appSuccess)
                         }
                         .padding()
-                        .background(Color.green.opacity(0.1))
+                                                    .background(Color.appSuccess.opacity(0.1))
                         .cornerRadius(12)
                         .padding(.horizontal)
                     case .error(let message):
                         HStack {
                             Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundColor(.red)
+                                .foregroundColor(Color.appError)
                             Text(message)
                                 .font(.subheadline)
-                                .foregroundColor(.red)
+                                .foregroundColor(Color.appError)
                         }
                         .padding()
-                        .background(Color.red.opacity(0.1))
+                                                    .background(Color.appError.opacity(0.1))
                         .cornerRadius(12)
                         .padding(.horizontal)
                     default:
@@ -232,7 +232,7 @@ struct GitHubSyncView: View {
                     Spacer(minLength: 100)
                 }
             }
-            .background(Color(.systemGroupedBackground))
+            .background(Color.appGroupedBackground)
             .navigationTitle("GitHub Sync")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

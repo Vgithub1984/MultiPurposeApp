@@ -104,7 +104,7 @@ struct ListItemsView: View {
                                 HStack(alignment: .center, spacing: 10) {
                                     ZStack {
                                         Circle()
-                                            .stroke(item.purchased ? Color.green : Color.gray, lineWidth: 2)
+                                            .stroke(item.purchased ? Color.appSuccess : Color.appSecondaryText, lineWidth: 2)
                                             .frame(width: 28, height: 28)
                                         Text("\(index+1)")
                                             .font(.subheadline)
@@ -113,11 +113,11 @@ struct ListItemsView: View {
                                     .padding(.leading, 8)
                                     Text(item.name)
                                         .strikethrough(item.purchased)
-                                        .foregroundColor(item.purchased ? .gray : .primary)
+                                        .foregroundColor(item.purchased ? Color.appSecondaryText : Color.appPrimaryText)
                                     Spacer()
                                     Button(action: { deleteItem(with: item.id) }) {
                                         Image(systemName: "trash")
-                                            .foregroundColor(.red)
+                                            .foregroundColor(Color.appError)
                                     }
                                     .buttonStyle(.plain)
                                 }

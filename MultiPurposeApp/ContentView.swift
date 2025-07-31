@@ -24,14 +24,10 @@ struct LiquidGlassButtonStyle: ButtonStyle {
                     RoundedRectangle(cornerRadius: 22, style: .continuous)
                         .fill(.ultraThinMaterial)
                         .blur(radius: configuration.isPressed ? 4 : 1)
-                        .shadow(color: Color.blue.opacity(0.2), radius: 14, x: 0, y: 4)
+                        .shadow(color: Color.appShadow, radius: 14, x: 0, y: 4)
                     RoundedRectangle(cornerRadius: 22, style: .continuous)
                         .stroke(
-                            LinearGradient(
-                                colors: [Color.white.opacity(0.7), Color.blue.opacity(0.5), Color.purple.opacity(0.6)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
+                            ColorTheme.glassGradient,
                             lineWidth: 2
                         )
                 }
@@ -40,7 +36,7 @@ struct LiquidGlassButtonStyle: ButtonStyle {
                 RoundedRectangle(cornerRadius: 22, style: .continuous)
                     .fill(
                         LinearGradient(
-                            colors: [Color.white.opacity(configuration.isPressed ? 0.06 : 0.13), Color.clear],
+                            colors: [Color.appPrimaryText.opacity(configuration.isPressed ? 0.06 : 0.13), Color.clear],
                             startPoint: .top,
                             endPoint: .bottom
                         )
@@ -88,24 +84,17 @@ struct ContentView: View {
     var body: some View {
         
         ZStack {
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color.blue.opacity(0.7),
-                    Color.purple.opacity(0.5),
-                ]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea(.all) // This makes it truly full screen
+            ColorTheme.primaryGradient
+                .ignoresSafeArea(.all) // This makes it truly full screen
             
             VStack {
                 
                 Image(systemName: "list.bullet.clipboard.fill")
                     .symbolRenderingMode(.palette)
                     .foregroundStyle(
-                        .blue,
-                        .purple.opacity(0.7),
-                        .white.opacity(0.8)
+                        Color.appPrimary,
+                        Color.appSecondary.opacity(0.7),
+                        Color.appPrimaryText.opacity(0.8)
                     )
                     .font(.system(size: 150))
                 
@@ -113,6 +102,7 @@ struct ContentView: View {
                 Text("MultiPurposeApp")
                     .font(.largeTitle)
                     .bold()
+                    .foregroundColor(Color.appPrimaryText)
                 
                 Spacer()
                 
@@ -120,17 +110,24 @@ struct ContentView: View {
                     Text("Features")
                         .font(.title2)
                         .bold()
+                        .foregroundColor(Color.appPrimaryText)
                     HStack {
                         Image(systemName: "checkmark.seal.fill")
+                            .foregroundColor(Color.appSuccess)
                         Text("Secure and Reliable")
+                            .foregroundColor(Color.appPrimaryText)
                     }
                     HStack {
                         Image(systemName: "gearshape.fill")
+                            .foregroundColor(Color.appInfo)
                         Text("Highly Customizable")
+                            .foregroundColor(Color.appPrimaryText)
                     }
                     HStack {
                         Image(systemName: "bolt.fill")
+                            .foregroundColor(Color.appWarning)
                         Text("Fast Performance")
+                            .foregroundColor(Color.appPrimaryText)
                     }
                 }
                 
@@ -208,8 +205,8 @@ struct ContentView: View {
                                     // Toggle the password visibility state
                                     showPassword.toggle()
                                 } label: {
-                                    Image(systemName: showPassword ? "eye.slash" : "eye")
-                                        .foregroundColor(.gray)
+                                                                    Image(systemName: showPassword ? "eye.slash" : "eye")
+                                    .foregroundColor(Color.appSecondaryText)
                                 }
                                 .padding(.trailing, 10)
                             }
@@ -242,7 +239,7 @@ struct ContentView: View {
                                         showConfirmPassword.toggle()
                                     } label: {
                                         Image(systemName: showConfirmPassword ? "eye.slash" : "eye")
-                                            .foregroundColor(.gray)
+                                            .foregroundColor(Color.appSecondaryText)
                                     }
                                     .padding(.trailing, 10)
                                 }
@@ -257,7 +254,7 @@ struct ContentView: View {
                                 showAlert = true
                             }
                             .font(.footnote)
-                            .foregroundColor(.blue)
+                            .foregroundColor(Color.appPrimary)
                             .padding(.top, -8)
                         }
                         

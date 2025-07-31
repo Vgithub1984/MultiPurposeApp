@@ -27,7 +27,7 @@ struct iCloudSyncView: View {
                     VStack(spacing: 8) {
                         Image(systemName: "icloud")
                             .font(.system(size: 60))
-                            .foregroundColor(.blue)
+                            .foregroundColor(Color.appPrimary)
                         
                         Text("iCloud Sync")
                             .font(.title)
@@ -52,10 +52,10 @@ struct iCloudSyncView: View {
                             VStack(spacing: 12) {
                                 HStack {
                                     Image(systemName: "checkmark.circle.fill")
-                                        .foregroundColor(.green)
+                                        .foregroundColor(Color.appSuccess)
                                     Text("iCloud is available")
                                         .font(.subheadline)
-                                        .foregroundColor(.green)
+                                        .foregroundColor(Color.appSuccess)
                                     Spacer()
                                 }
                                 
@@ -74,7 +74,7 @@ struct iCloudSyncView: View {
                                     syncService.checkiCloudStatus()
                                 }
                                 .buttonStyle(.bordered)
-                                .foregroundColor(.blue)
+                                .foregroundColor(Color.appPrimary)
                             }
                             .padding()
                             .background(Color(.systemGray6))
@@ -84,10 +84,10 @@ struct iCloudSyncView: View {
                             VStack(spacing: 12) {
                                 HStack {
                                     Image(systemName: "exclamationmark.triangle.fill")
-                                        .foregroundColor(.orange)
+                                        .foregroundColor(Color.appWarning)
                                     Text("iCloud not available")
                                         .font(.subheadline)
-                                        .foregroundColor(.orange)
+                                        .foregroundColor(Color.appWarning)
                                     Spacer()
                                 }
                                 
@@ -100,7 +100,7 @@ struct iCloudSyncView: View {
                                     showSettingsAlert = true
                                 }
                                 .buttonStyle(.bordered)
-                                .foregroundColor(.blue)
+                                .foregroundColor(Color.appPrimary)
                             }
                             .padding()
                             .background(Color(.systemGray6))
@@ -145,7 +145,7 @@ struct iCloudSyncView: View {
                                 .cornerRadius(12)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+                                        .stroke(Color.appPrimary.opacity(0.3), lineWidth: 1)
                                 )
                                 .disabled(syncService.isSyncing)
                                 
@@ -176,7 +176,7 @@ struct iCloudSyncView: View {
                                 .cornerRadius(12)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.green.opacity(0.3), lineWidth: 1)
+                                        .stroke(Color.appSuccess.opacity(0.3), lineWidth: 1)
                                 )
                                 .disabled(syncService.isSyncing)
                             }
@@ -204,25 +204,25 @@ struct iCloudSyncView: View {
                     case .success:
                         HStack {
                             Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.green)
+                                .foregroundColor(Color.appSuccess)
                             Text("Sync completed successfully")
                                 .font(.subheadline)
-                                .foregroundColor(.green)
+                                .foregroundColor(Color.appSuccess)
                         }
                         .padding()
-                        .background(Color.green.opacity(0.1))
+                                                    .background(Color.appSuccess.opacity(0.1))
                         .cornerRadius(12)
                         .padding(.horizontal)
                     case .error(let message):
                         HStack {
                             Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundColor(.red)
+                                .foregroundColor(Color.appError)
                             Text(message)
                                 .font(.subheadline)
-                                .foregroundColor(.red)
+                                .foregroundColor(Color.appError)
                         }
                         .padding()
-                        .background(Color.red.opacity(0.1))
+                                                    .background(Color.appError.opacity(0.1))
                         .cornerRadius(12)
                         .padding(.horizontal)
                     default:
@@ -262,7 +262,7 @@ struct iCloudSyncView: View {
                             )
                         }
                         .padding()
-                        .background(Color(.systemBackground))
+                        .background(Color.appBackground)
                         .cornerRadius(12)
                         .padding(.horizontal)
                     }
@@ -270,7 +270,7 @@ struct iCloudSyncView: View {
                     Spacer(minLength: 100)
                 }
             }
-            .background(Color(.systemGroupedBackground))
+            .background(Color.appGroupedBackground)
             .navigationTitle("iCloud Sync")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

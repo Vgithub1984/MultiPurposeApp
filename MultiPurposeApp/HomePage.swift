@@ -109,12 +109,12 @@ struct HomePage: View {
                                     .bold()
                                 Spacer()
                                 Text("Active: \(activeListCount)")
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(Color.appPrimary)
                                     .bold()
                             }
                             .font(.callout)
                             .padding()
-                            .background(Color.orange.opacity(0.2))
+                            .background(Color.appWarning.opacity(0.2))
                             .cornerRadius(10)
                             .padding(.horizontal)
                             
@@ -147,13 +147,22 @@ struct HomePage: View {
                     if deletedLists.isEmpty {
                         //default display when empty deleted list
                         Spacer()
-                        Label("Deleted Lists", systemImage: "trash")
-                            .font(.title)
-                        
                         VStack(spacing: 5) {
+                            Label("Deleted Lists", systemImage: "trash")
+                                .font(.title)
+                                .bold()
                             Text("No deleted lists !")
                                 .foregroundColor(.secondary)
                             Text("Deleted lists will appear here")
+                                .foregroundColor(.secondary)
+                            Text("")
+                            Text("")
+                            Text("Gestures:")
+                                .font(.title)
+                                .bold()
+                            Label("Swipe Left to Delete List", systemImage: "arrow.backward.square")
+                                .foregroundColor(.secondary)
+                            Label("Swipe Right to Restore List", systemImage: "arrow.forward.square")
                                 .foregroundColor(.secondary)
                         }
                         Spacer()
@@ -170,7 +179,7 @@ struct HomePage: View {
                             }
                             .font(.callout)
                             .padding()
-                            .background(Color.red.opacity(0.2))
+                            .background(Color.appError.opacity(0.2))
                             .cornerRadius(10)
                             .padding(.horizontal)
                             
@@ -409,11 +418,10 @@ struct HomePage: View {
                                 }
                             }
                             .padding()
-                            .background(Color(.systemBackground))
-                            .cornerRadius(12)
+                            .appCardStyle()
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+                                    .stroke(Color.appPrimary.opacity(0.3), lineWidth: 1)
                             )
                         }
                         .padding(.horizontal)
@@ -433,7 +441,7 @@ struct HomePage: View {
                                     HStack {
                                         Image(systemName: "cloud.and.arrow.up")
                                             .font(.title2)
-                                            .foregroundColor(.blue)
+                                            .foregroundColor(Color.appPrimary)
                                         
                                         VStack(alignment: .leading) {
                                             Text("GitHub Sync")
@@ -451,11 +459,10 @@ struct HomePage: View {
                                 }
                                 .buttonStyle(.plain)
                                 .padding()
-                                .background(Color(.systemBackground))
-                                .cornerRadius(12)
+                                .appCardStyle()
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+                                        .stroke(Color.appPrimary.opacity(0.3), lineWidth: 1)
                                 )
                                 
                                 // iCloud Sync Button
@@ -465,7 +472,7 @@ struct HomePage: View {
                                     HStack {
                                         Image(systemName: "icloud")
                                             .font(.title2)
-                                            .foregroundColor(.green)
+                                            .foregroundColor(Color.appSuccess)
                                         
                                         VStack(alignment: .leading) {
                                             Text("iCloud Sync")
@@ -483,11 +490,10 @@ struct HomePage: View {
                                 }
                                 .buttonStyle(.plain)
                                 .padding()
-                                .background(Color(.systemBackground))
-                                .cornerRadius(12)
+                                .appCardStyle()
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.green.opacity(0.3), lineWidth: 1)
+                                        .stroke(Color.appSuccess.opacity(0.3), lineWidth: 1)
                                 )
                             }
                             .padding(.horizontal)
@@ -526,11 +532,10 @@ struct HomePage: View {
                                 }
                             }
                             .padding()
-                            .background(Color(.systemBackground))
-                            .cornerRadius(12)
+                            .appCardStyle()
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                                    .stroke(Color.appSecondaryText.opacity(0.3), lineWidth: 1)
                             )
                             .padding(.horizontal)
                         }
@@ -556,7 +561,7 @@ struct HomePage: View {
                 }
                 .tag(3)
             }
-            .background(Color(.systemBackground))
+            .background(Color.appBackground)
             .ignoresSafeArea()
             .fullScreenCover(item: $selectedList, onDismiss: {
                 selectedList = nil
@@ -572,7 +577,7 @@ struct HomePage: View {
                 } label: {
                     Image(systemName: "plus.circle.fill")
                         .font(.system(size: 50))
-                        .foregroundColor(.blue)
+                        .foregroundColor(Color.appPrimary)
                 }
                 .padding(.bottom, 60)
                 .padding(.trailing, 45)
@@ -885,6 +890,7 @@ struct ListCardView: View {
                 if hasItems {
                     Image(systemName: "checklist")
                         .foregroundColor(.blue)
+                    
                 }
             }
                 
