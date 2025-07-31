@@ -132,6 +132,8 @@ struct HomePage: View {
                                     }
                             }
                             .listStyle(.plain)
+                            .environment(\.defaultMinListRowHeight, 0)  // Remove default spacing
+                            .environment(\.defaultMinListHeaderHeight, 0)  // Remove header spacing
                             .id(listsNeedRefresh)
                         }
                     }
@@ -202,6 +204,8 @@ struct HomePage: View {
                                     }
                             }
                             .listStyle(.plain)
+                            .environment(\.defaultMinListRowHeight, 0)  // Remove default spacing
+                            .environment(\.defaultMinListHeaderHeight, 0)  // Remove header spacing
                             .id(listsNeedRefresh)
                         }
                     }
