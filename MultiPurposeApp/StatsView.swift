@@ -2,7 +2,6 @@ import SwiftUI
 
 struct StatsView: View {
     let lists: [ListItem]
-    let activeListCount: Int
     let totalItemsCount: Int
     let completedItemsCount: Int
     let overallCompletionRate: Double
@@ -12,6 +11,46 @@ struct StatsView: View {
     let listsCreatedThisWeek: Int
     let listsCreatedThisMonth: Int
     let deletedLists: [ListItem]
+    
+    private var zeroItemCount: Int {
+        lists.filter { list in
+            let key = "items_\(list.id.uuidString)"
+            if let data = UserDefaults.standard.data(forKey: key),
+               let items = try? JSONDecoder().decode([ListElement].self, from: data) {
+                let purchasedCount = items.filter { $0.purchased }.count
+                return items.count == 0 && purchasedCount == 0
+            }
+            return true // treat as zero if no data
+        }.count
+    }
+    
+    private var completedListCount: Int {
+        lists.filter { list in
+            let key = "items_\(list.id.uuidString)"
+            if let data = UserDefaults.standard.data(forKey: key),
+               let items = try? JSONDecoder().decode([ListElement].self, from: data) {
+                let purchasedCount = items.filter { $0.purchased }.count
+                return items.count >= 1 && items.count == purchasedCount
+            }
+            return false
+        }.count
+    }
+    
+    private var activeListCount: Int {
+        lists.filter { list in
+            let key = "items_\(list.id.uuidString)"
+            if let data = UserDefaults.standard.data(forKey: key),
+               let items = try? JSONDecoder().decode([ListElement].self, from: data) {
+                let purchasedCount = items.filter { $0.purchased }.count
+                return items.count >= 1 && items.count != purchasedCount
+            }
+            return false
+        }.count
+    }
+    
+    private var totalListCount: Int {
+        activeListCount + zeroItemCount + completedListCount + deletedLists.count
+    }
 
     var body: some View {
         ScrollView {
@@ -26,37 +65,43 @@ struct StatsView: View {
                 }
                 .padding(.top, 20)
 
-                LazyVGrid(columns: [
-                    GridItem(.flexible()),
-                    GridItem(.flexible())
-                ], spacing: 16) {
+                VStack(spacing: 16) {
                     StatCard(
                         title: "Total Lists",
-                        value: "\(lists.count)",
+                        value: "\(totalListCount)",
                         icon: "list.bullet.rectangle",
                         color: .blue
                     )
+                    .frame(maxWidth: .infinity)
+                    .padding(.bottom, 5)
 
-                    StatCard(
-                        title: "Active Lists",
-                        value: "\(activeListCount)",
-                        icon: "checklist",
-                        color: .green
-                    )
-
-                    StatCard(
-                        title: "Total Items",
-                        value: "\(totalItemsCount)",
-                        icon: "square.and.pencil",
-                        color: .orange
-                    )
-
-                    StatCard(
-                        title: "Completed",
-                        value: "\(completedItemsCount)",
-                        icon: "checkmark.circle",
-                        color: .purple
-                    )
+                    HStack(spacing: 10) {
+                        StatCard(
+                            title: "Active",
+                            value: "\(activeListCount)",
+                            icon: "checklist",
+                            color: .blue
+                        )
+                        StatCard(
+                            title: "Zero Item",
+                            value: "\(zeroItemCount)",
+                            icon: "list.bullet.rectangle",
+                            color: .gray
+                        )
+                        StatCard(
+                            title: "Completed",
+                            value: "\(completedListCount)",
+                            icon: "checkmark.circle",
+                            color: .green
+                        )
+                        StatCard(
+                            title: "Deleted",
+                            value: "\(deletedLists.count)",
+                            icon: "trash",
+                            color: .red
+                        )
+                    }
+                    .frame(maxWidth: .infinity)
                 }
                 .padding(.horizontal)
 
@@ -132,24 +177,10 @@ struct StatsView: View {
                         .padding(.horizontal)
                     }
                 }
-
-                if deletedLists.count > 0 {
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text("Deleted Lists")
-                            .font(.headline)
-                            .bold()
-                            .padding(.horizontal)
-
-                        VStack(spacing: 12) {
-                            DeletedSummaryCard(count: deletedLists.count)
-                        }
-                        .padding(.horizontal)
-                    }
-                }
-
                 Spacer(minLength: 100)
             }
         }
         .background(Color(.systemGroupedBackground))
     }
 }
+

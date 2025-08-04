@@ -88,6 +88,8 @@ struct ListItemsView: View {
                             .onSubmit { addItem() }
                             .focused($isInputFocused)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .autocapitalization(.sentences)
+                            .disableAutocorrection(false)
                         Button(action: addItem) {
                             Image(systemName: "plus.circle.fill")
                                 .font(.title2)

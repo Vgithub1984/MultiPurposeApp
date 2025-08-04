@@ -43,9 +43,9 @@ struct ListsView: View {
                                     Label("Delete", systemImage: "trash")
                                 }
                             }
-                            .listRowSeparator(.hidden)
                     }
                     .listStyle(.plain)
+                   // .listRowSeparator(.hidden)
                     .environment(\.defaultMinListRowHeight, 60)
                     .environment(\.defaultMinListHeaderHeight, 0)
                     .id(listsNeedRefresh)

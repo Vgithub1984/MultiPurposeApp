@@ -4,16 +4,24 @@
 //
 //  Created by Varun Patel on 7/28/25.
 //
+//  This file defines the main ContentView for the MultiPurposeApp,
+//  including the landing page, authentication flow (login/sign up),
+//  session management, and navigation to the home page upon successful login.
+//
 
 import SwiftUI
 import SwiftData
 import Foundation
 // Removed import TempUser as per instructions
 
+/// Extension to conform TempUser to Identifiable for use in SwiftUI views.
 extension TempUser: Identifiable {
+    /// Unique identifier for TempUser, based on userId (email).
     var id: String { userId }
 }
 
+/// A custom button style that mimics a liquid glass effect.
+/// Applies shadows, gradients, blur and scale animation on press.
 struct LiquidGlassButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -47,47 +55,72 @@ struct LiquidGlassButtonStyle: ButtonStyle {
     }
 }
 
+/// The main content view of the app, responsible for displaying the welcome screen,
+/// managing user authentication (login/sign up), session persistence,
+/// and navigation to the HomePage on successful login.
 struct ContentView: View {
     
     // MARK: - Authentication State Properties
+    
+    /// Controls whether to show the authentication sheet (login/signup).
     @State private var showAuthSheet: Bool = false
+    
+    /// Tracks whether user is in login mode (true) or sign up mode (false).
     @State private var isLogin: Bool = true
+    
+    /// Email input field state.
     @State private var email: String = ""
+    
+    /// Password input field state.
     @State private var password: String = ""
+    
+    /// Controls the display of alert messages.
     @State private var showAlert: Bool = false
+    
+    /// Holds the current alert message to be displayed.
     @State private var alertMessage: String = ""
     
-    // New state property to toggle password visibility
+    /// Toggles visibility of the password field.
     @State private var showPassword: Bool = false
     
-    // New state properties for Sign Up fields
+    /// First name input field state for sign up.
     @State private var firstName: String = ""
+    
+    /// Last name input field state for sign up.
     @State private var lastName: String = ""
+    
+    /// Confirm password input field state for sign up.
     @State private var confirmPassword: String = ""
+    
+    /// Toggles visibility of the confirm password field.
     @State private var showConfirmPassword: Bool = false
     
-    // New state property for storing all registered users including the default user
+    /// Stores all registered users, initialized with default user if none saved.
     @State private var registeredUsers: [TempUser] = []
     
-    // New state property to hold the logged in user for presenting HomePage
+    /// Holds the currently logged-in user to present the HomePage.
     @State private var loggedInUser: TempUser? = nil
     
-    // Added state property to indicate logging in loading screen
+    /// Shows a full screen loading view during login process.
     @State private var isLoggingIn: Bool = false
     
-    // Add this enum and property at the top of ContentView
+    /// Enum for managing focus between authentication form fields.
     enum AuthField: Hashable {
         case firstName, lastName, email, password, confirmPassword
     }
+    
+    /// Focus state for controlling keyboard focus on authentication fields.
     @FocusState private var focusedField: AuthField?
     
     var body: some View {
         
         ZStack {
+            // Background gradient for entire screen
             ColorTheme.primaryGradient
-                .ignoresSafeArea(.all) // This makes it truly full screen
+                .ignoresSafeArea(.all)
             
             VStack {
+                // MARK: - Header: App Icon and Title
                 
                 Image(systemName: "list.bullet.clipboard.fill")
                     .symbolRenderingMode(.palette)
@@ -105,6 +138,8 @@ struct ContentView: View {
                     .foregroundColor(Color.appPrimaryText)
                 
                 Spacer()
+                
+                // MARK: - Features List
                 
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Features")
@@ -133,19 +168,23 @@ struct ContentView: View {
                 
                 Spacer()
                 
+                // MARK: - Get Started Button
+                
                 Button("Get Started") {
-                    // Show authentication sheet when button tapped
+                    // On tap, show authentication sheet to allow login or sign up
                     showAuthSheet = true
                 }
                 .buttonStyle(LiquidGlassButtonStyle())
                 
             }
             .padding(.top, 30)
-            // Authentication Sheet
+            
+            // MARK: - Authentication Sheet (Login / Sign Up)
+            
             .sheet(isPresented: $showAuthSheet) {
                 NavigationView {
                     VStack(spacing: 20) {
-                        // Picker to switch between Login and Signup
+                        // Picker to toggle between Login and Sign Up modes
                         Picker("", selection: $isLogin) {
                             Text("Login").tag(true)
                             Text("Sign Up").tag(false)
@@ -153,9 +192,9 @@ struct ContentView: View {
                         .pickerStyle(SegmentedPickerStyle())
                         .padding(.horizontal)
                         
-                        // Sign Up fields: First Name and Last Name
+                        // Sign Up-specific fields: First Name and Last Name
                         if !isLogin {
-                            // First Name TextField
+                            // First Name TextField with autocapitalization and focus
                             TextField("First Name", text: $firstName)
                                 .autocapitalization(.words)
                                 .disableAutocorrection(true)
@@ -163,7 +202,7 @@ struct ContentView: View {
                                 .padding(.horizontal)
                                 .focused($focusedField, equals: .firstName)
                             
-                            // Last Name TextField
+                            // Last Name TextField, no explicit focus set here
                             TextField("Last Name", text: $lastName)
                                 .autocapitalization(.words)
                                 .disableAutocorrection(true)
@@ -171,7 +210,7 @@ struct ContentView: View {
                                 .padding(.horizontal)
                         }
                         
-                        // Email TextField
+                        // Email field for both login and sign up, focused accordingly
                         TextField("Email", text: $email)
                             .keyboardType(.emailAddress)
                             .autocapitalization(.none)
@@ -180,44 +219,42 @@ struct ContentView: View {
                             .padding(.horizontal)
                             .focused($focusedField, equals: .email)
                         
-                        // Password field with toggle visibility button
+                        // Password input with toggleable visibility (secure or plain)
                         ZStack {
                             if showPassword {
-                                // If showPassword is true, show TextField
+                                // Show password as plain text when visible
                                 TextField("Password", text: $password)
                                     .autocapitalization(.none)
                                     .disableAutocorrection(true)
                                     .textFieldStyle(RoundedBorderTextFieldStyle())
                                     .padding(.horizontal)
-                                    .padding(.trailing, 40) // Space for the button
+                                    .padding(.trailing, 40) // Space for visibility toggle button
                             } else {
-                                // Otherwise, show SecureField
+                                // SecureField masks the password characters
                                 SecureField("Password", text: $password)
                                     .textFieldStyle(RoundedBorderTextFieldStyle())
                                     .padding(.horizontal)
-                                    .padding(.trailing, 40) // Space for the button
+                                    .padding(.trailing, 40) // Space for visibility toggle button
                             }
                             
-                            // Trailing button to toggle password visibility
+                            // Button to toggle password visibility, aligned trailing
                             HStack {
                                 Spacer()
                                 Button {
-                                    // Toggle the password visibility state
                                     showPassword.toggle()
                                 } label: {
-                                                                    Image(systemName: showPassword ? "eye.slash" : "eye")
-                                    .foregroundColor(Color.appSecondaryText)
+                                    Image(systemName: showPassword ? "eye.slash" : "eye")
+                                        .foregroundColor(Color.appSecondaryText)
                                 }
                                 .padding(.trailing, 10)
                             }
                         }
                         
-                        // Confirm Password field for Sign Up mode
+                        // Confirm Password field, only shown during Sign Up
                         if !isLogin {
-                            // ZStack similar to Password field for confirming password
                             ZStack {
                                 if showConfirmPassword {
-                                    // Show TextField if visibility is on
+                                    // Plain text confirm password field
                                     TextField("Confirm Password", text: $confirmPassword)
                                         .autocapitalization(.none)
                                         .disableAutocorrection(true)
@@ -225,14 +262,14 @@ struct ContentView: View {
                                         .padding(.horizontal)
                                         .padding(.trailing, 40)
                                 } else {
-                                    // Otherwise show SecureField
+                                    // Secure confirm password field
                                     SecureField("Confirm Password", text: $confirmPassword)
                                         .textFieldStyle(RoundedBorderTextFieldStyle())
                                         .padding(.horizontal)
                                         .padding(.trailing, 40)
                                 }
                                 
-                                // Trailing button to toggle confirm password visibility
+                                // Toggle visibility button for confirm password
                                 HStack {
                                     Spacer()
                                     Button {
@@ -246,10 +283,10 @@ struct ContentView: View {
                             }
                         }
                         
-                        // "Forgot Password?" button shown only in Login mode
+                        // "Forgot Password?" button shown only in login mode
                         if isLogin {
                             Button("Forgot Password?") {
-                                // Show alert with password reset info
+                                // Inform user about password reset instructions via alert
                                 alertMessage = "Password reset instructions would be sent to your email."
                                 showAlert = true
                             }
@@ -258,15 +295,17 @@ struct ContentView: View {
                             .padding(.top, -8)
                         }
                         
-                        // Action Button (Login or Signup)
+                        // MARK: - Primary Action Button for Login or Sign Up
+                        
                         Button(isLogin ? "Login" : "Sign Up") {
-                            // Validate inputs common for both Login and Sign Up
+                            // Validate required fields for both login and sign up
                             if email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
                                 password.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                                 alertMessage = "Please fill in all fields."
                                 showAlert = true
                                 return
                             }
+                            // Basic email format check
                             if !email.contains("@") || !email.contains(".") {
                                 alertMessage = "Please enter a valid email address."
                                 showAlert = true
@@ -275,7 +314,7 @@ struct ContentView: View {
                             
                             // Additional validation for Sign Up mode
                             if !isLogin {
-                                // Check first name and last name are not empty
+                                // Ensure first and last names are provided
                                 if firstName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
                                     lastName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                                     alertMessage = "Please enter your first and last name."
@@ -283,7 +322,7 @@ struct ContentView: View {
                                     return
                                 }
                                 
-                                // Check confirm password matches password
+                                // Confirm password must match password
                                 if confirmPassword != password {
                                     alertMessage = "Passwords do not match."
                                     showAlert = true
@@ -291,52 +330,53 @@ struct ContentView: View {
                                 }
                             }
                             
-                            // MARK: - TempUser Authentication Check for Login
+                            // MARK: - Login Authentication Check
+                            
                             if isLogin {
-                                // Check if user exists in registeredUsers
+                                // Look for a matching user with correct credentials
                                 if let matchedUser = registeredUsers.first(where: { $0.userId == email && $0.password == password }) {
-                                    // Credentials match, allow login and dismiss sheet with loading screen
+                                    // Credentials correct - proceed with login
                                     isLoggingIn = true
                                     showAuthSheet = false
                                     
-                                    // Clear fields for next time
+                                    // Reset input fields for next use
                                     email = ""
                                     password = ""
                                     showPassword = false
                                     
-                                    // Save users in case there were any changes
+                                    // Persist user list changes if any
                                     saveUsers()
                                     
                                     // Save logged in user for session persistence
                                     saveLoggedInUser(matchedUser)
                                     
-                                    // After 8 seconds, transition to HomePage and stop loading
+                                    // Simulate loading delay, then transition to HomePage and stop loading
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
                                         loggedInUser = matchedUser
                                         isLoggingIn = false
                                     }
                                 } else {
+                                    // No matching user found or password incorrect
                                     alertMessage = "Incorrect email or password."
                                     showAlert = true
                                     return
                                 }
                             } else {
-                                // MARK: - Append new user to registeredUsers on Sign Up
+                                // MARK: - Sign Up: Append new user
+                                
                                 let newUser = TempUser(firstName: firstName, lastName: lastName, userId: email, password: password)
                                 registeredUsers.append(newUser)
                                 
-                                // Save updated users list
+                                // Save updated users list to persistent storage
                                 saveUsers()
                                 
-                                // For Sign Up, dismiss sheet on success.
+                                // Dismiss sign up sheet on success
                                 showAuthSheet = false
                                 
-                                // Clear fields for next time
+                                // Reset fields for next use
                                 email = ""
                                 password = ""
                                 showPassword = false
-                                
-                                // Clear sign up specific fields
                                 firstName = ""
                                 lastName = ""
                                 confirmPassword = ""
@@ -351,7 +391,7 @@ struct ContentView: View {
                     }
                     .navigationTitle(isLogin ? "Login" : "Sign Up")
                     .toolbar {
-                        // Dismiss button
+                        // Cancel button to dismiss authentication sheet and reset fields
                         ToolbarItem(placement: .cancellationAction) {
                             Button("Cancel") {
                                 showAuthSheet = false
@@ -365,7 +405,7 @@ struct ContentView: View {
                             }
                         }
                     }
-                    // Alert for validation errors and info
+                    // Alert shown for invalid input or info messages
                     .alert(isPresented: $showAlert) {
                         Alert(title: Text("Invalid Input"),
                               message: Text(alertMessage),
@@ -373,11 +413,13 @@ struct ContentView: View {
                     }
                 }
                 .onAppear {
+                    // Set initial keyboard focus depending on mode
                     DispatchQueue.main.async {
                         focusedField = isLogin ? .email : .firstName
                     }
                 }
                 .onChange(of: isLogin) { _, newValue in
+                    // Update focus on mode switch
                     DispatchQueue.main.async {
                         focusedField = newValue ? .email : .firstName
                     }
@@ -385,21 +427,25 @@ struct ContentView: View {
             }
         }
         .onAppear {
+            // Load registered users from persistent storage or default user if none saved
             registeredUsers = loadUsers()
-            // Check if user is already logged in
+            
+            // If a user is already logged in, restore the session and present HomePage
             if let savedUser = loadLoggedInUser() {
                 loggedInUser = savedUser
             }
         }
-        // Full screen cover for logging in loading screen
+        // Full screen loading view presented during login process
         .fullScreenCover(isPresented: $isLoggingIn) {
             LoggingInView()
         }
-        // Full screen cover for HomePage after login
+        // Full screen cover presenting HomePage when loggedInUser is set
         .fullScreenCover(item: $loggedInUser, onDismiss: {
+            // When home page is dismissed, clear logged in user to return to welcome screen
             loggedInUser = nil
         }) { user in
             HomePage(user: user, onLogout: {
+                // Logout handler clears session and returns to welcome screen
                 logout()
             })
         }
@@ -409,6 +455,8 @@ struct ContentView: View {
     
     // MARK: - Helper functions for saving/loading users
     
+    /// Loads the list of registered users from UserDefaults.
+    /// Returns a default user if none are found or decoding fails.
     private func loadUsers() -> [TempUser] {
         guard let data = UserDefaults.standard.data(forKey: "registeredUsers") else {
             return [TempUser.default]
@@ -417,21 +465,26 @@ struct ContentView: View {
             let decoded = try JSONDecoder().decode([TempUser].self, from: data)
             return decoded.isEmpty ? [TempUser.default] : decoded
         } catch {
+            // Decoding error returns default user
             return [TempUser.default]
         }
     }
     
+    /// Saves the current registeredUsers array to UserDefaults.
+    /// Silent failure on encoding errors.
     private func saveUsers() {
         do {
             let encoded = try JSONEncoder().encode(registeredUsers)
             UserDefaults.standard.set(encoded, forKey: "registeredUsers")
         } catch {
-            // Handle encoding error if needed, silent fail here
+            // Encoding error ignored here
         }
     }
     
     // MARK: - Session Management
     
+    /// Saves the currently logged in user for session persistence.
+    /// - Parameter user: The TempUser instance to save.
     private func saveLoggedInUser(_ user: TempUser) {
         do {
             let encoded = try JSONEncoder().encode(user)
@@ -441,6 +494,8 @@ struct ContentView: View {
         }
     }
     
+    /// Loads the saved logged in user from UserDefaults.
+    /// Returns nil if no user is saved or decoding fails.
     private func loadLoggedInUser() -> TempUser? {
         guard let data = UserDefaults.standard.data(forKey: "loggedInUser") else {
             return nil
@@ -455,8 +510,9 @@ struct ContentView: View {
         }
     }
     
+    /// Logs out the current user by removing saved session data.
+    /// Resets loggedInUser state to nil, which dismisses HomePage.
     private func logout() {
-        // Clear logged in user data
         UserDefaults.standard.removeObject(forKey: "loggedInUser")
         loggedInUser = nil
     }
@@ -469,3 +525,4 @@ struct ContentView: View {
     ContentView()
         
 }
+
