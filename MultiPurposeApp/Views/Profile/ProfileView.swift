@@ -144,22 +144,22 @@ struct ProfileView: View {
         }
         .background(Color(.systemGroupedBackground))
         // MARK: - Sheet Presentations
-        .sheet(isPresented: $showAccountSheet) {
+        .fullScreenCover(isPresented: $showAccountSheet) {
             AccountSheet(user: user)
         }
-        .sheet(isPresented: $showPrivacySheet) {
+        .fullScreenCover(isPresented: $showPrivacySheet) {
             PrivacySheet()
         }
-        .sheet(isPresented: $showNotificationsSheet) {
+        .fullScreenCover(isPresented: $showNotificationsSheet) {
             NotificationsSheet()
         }
-        .sheet(isPresented: $showStorageSheet) {
+        .fullScreenCover(isPresented: $showStorageSheet) {
             StorageSheet(lists: lists, deletedLists: deletedLists)
         }
-        .sheet(isPresented: $showHelpSheet) {
+        .fullScreenCover(isPresented: $showHelpSheet) {
             HelpSheet()
         }
-        .sheet(isPresented: $showAboutSheet) {
+        .fullScreenCover(isPresented: $showAboutSheet) {
             AboutSheet()
         }
     }
@@ -226,7 +226,6 @@ struct AccountSheet: View {
                             .font(.title2)
                             .bold()
                     }
-                    .padding(.top, 20)
                     
                     VStack(spacing: 16) {
                         ProfileInfoRow(title: "First Name", value: user.firstName)
@@ -237,13 +236,16 @@ struct AccountSheet: View {
                         ProfileInfoRow(title: "Last Login", value: "Today")
                     }
                     .padding()
-                    .background(Color(.systemBackground))
+                    .background(Color.white)
                     .cornerRadius(12)
                     .padding(.horizontal)
                     
                     Spacer()
                 }
+                .padding(.top, 0)
             }
+            .background(Color.white)
+            .navigationTitle("Account Settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -255,6 +257,7 @@ struct AccountSheet: View {
                 }
             }
         }
+        .background(Color.white)
     }
 }
 
@@ -277,22 +280,21 @@ struct PrivacySheet: View {
                             .font(.title2)
                             .bold()
                     }
-                    .padding(.top, 20)
                     
                     VStack(spacing: 16) {
                         Toggle("Allow Analytics", isOn: $allowAnalytics)
                             .padding()
-                            .background(Color(.systemBackground))
+                            .background(Color.white)
                             .cornerRadius(12)
                         
                         Toggle("Allow Crash Reports", isOn: $allowCrashReports)
                             .padding()
-                            .background(Color(.systemBackground))
+                            .background(Color.white)
                             .cornerRadius(12)
                         
                         Toggle("Allow Personalization", isOn: $allowPersonalization)
                             .padding()
-                            .background(Color(.systemBackground))
+                            .background(Color.white)
                             .cornerRadius(12)
                     }
                     .padding(.horizontal)
@@ -336,14 +338,17 @@ struct PrivacySheet: View {
                             )
                         }
                         .padding()
-                        .background(Color(.systemBackground))
+                        .background(Color.white)
                         .cornerRadius(12)
                         .padding(.horizontal)
                     }
                     
                     Spacer()
                 }
+                .padding(.top, 0)
             }
+            .background(Color.white)
+            .navigationTitle("Privacy Settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -355,6 +360,7 @@ struct PrivacySheet: View {
                 }
             }
         }
+        .background(Color.white)
     }
 }
 
@@ -377,29 +383,31 @@ struct NotificationsSheet: View {
                             .font(.title2)
                             .bold()
                     }
-                    .padding(.top, 20)
                     
                     VStack(spacing: 16) {
                         Toggle("Push Notifications", isOn: $allowPushNotifications)
                             .padding()
-                            .background(Color(.systemBackground))
+                            .background(Color.white)
                             .cornerRadius(12)
                         
                         Toggle("Reminders", isOn: $allowReminders)
                             .padding()
-                            .background(Color(.systemBackground))
+                            .background(Color.white)
                             .cornerRadius(12)
                         
                         Toggle("App Updates", isOn: $allowUpdates)
                             .padding()
-                            .background(Color(.systemBackground))
+                            .background(Color.white)
                             .cornerRadius(12)
                     }
                     .padding(.horizontal)
                     
                     Spacer()
                 }
+                .padding(.top, 0)
             }
+            .background(Color.white)
+            .navigationTitle("Notification Settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -411,6 +419,7 @@ struct NotificationsSheet: View {
                 }
             }
         }
+        .background(Color.white)
     }
 }
 
@@ -447,7 +456,6 @@ struct StorageSheet: View {
                             .font(.title2)
                             .bold()
                     }
-                    .padding(.top, 20)
                     
                     VStack(spacing: 16) {
                         ProfileInfoRow(title: "Active Lists", value: "\(lists.count)")
@@ -458,13 +466,16 @@ struct StorageSheet: View {
                         ProfileInfoRow(title: "Data Usage", value: "156 KB")
                     }
                     .padding()
-                    .background(Color(.systemBackground))
+                    .background(Color.white)
                     .cornerRadius(12)
                     .padding(.horizontal)
                     
                     Spacer()
                 }
+                .padding(.top, 0)
             }
+            .background(Color.white)
+            .navigationTitle("Storage and Data")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -476,6 +487,7 @@ struct StorageSheet: View {
                 }
             }
         }
+        .background(Color.white)
     }
 }
 
@@ -495,7 +507,6 @@ struct HelpSheet: View {
                             .font(.title2)
                             .bold()
                     }
-                    .padding(.top, 20)
                     
                     VStack(spacing: 16) {
                         HelpItem(
@@ -561,14 +572,17 @@ struct HelpSheet: View {
                             )
                         }
                         .padding()
-                        .background(Color(.systemBackground))
+                        .background(Color.white)
                         .cornerRadius(12)
                         .padding(.horizontal)
                     }
                     
                     Spacer()
                 }
+                .padding(.top, 0)
             }
+            .background(Color.white)
+            .navigationTitle("Help & Support")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -580,6 +594,7 @@ struct HelpSheet: View {
                 }
             }
         }
+        .background(Color.white)
     }
 }
 
@@ -599,7 +614,6 @@ struct AboutSheet: View {
                             .font(.title2)
                             .bold()
                     }
-                    .padding(.top, 20)
                     
                     // App Introduction Section
                     VStack(alignment: .leading, spacing: 16) {
@@ -612,7 +626,7 @@ struct AboutSheet: View {
                             .font(.body)
                             .foregroundColor(.secondary)
                             .padding()
-                            .background(Color(.systemBackground))
+                            .background(Color.white)
                             .cornerRadius(12)
                             .padding(.horizontal)
                     }
@@ -662,7 +676,7 @@ struct AboutSheet: View {
                             )
                         }
                         .padding()
-                        .background(Color(.systemBackground))
+                        .background(Color.white)
                         .cornerRadius(12)
                         .padding(.horizontal)
                     }
@@ -677,13 +691,16 @@ struct AboutSheet: View {
                         ProfileInfoRow(title: "License", value: "MIT")
                     }
                     .padding()
-                    .background(Color(.systemBackground))
+                    .background(Color.white)
                     .cornerRadius(12)
                     .padding(.horizontal)
                     
                     Spacer()
                 }
+                .padding(.top, 0)
             }
+            .background(Color.white)
+            .navigationTitle("About MultiPurposeApp")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -695,6 +712,7 @@ struct AboutSheet: View {
                 }
             }
         }
+        .background(Color.white)
     }
 }
 
@@ -829,3 +847,4 @@ struct FeatureItem: View {
         .cornerRadius(12)
     }
 }
+
