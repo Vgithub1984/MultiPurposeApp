@@ -175,17 +175,6 @@ extension Color {
 // MARK: - View Extensions for Dark Mode
 extension View {
     
-    /// Applies the app's standard card styling with dark mode support
-    func appCardStyle() -> some View {
-        self
-            .background(Color.appCardBackground)
-            .cornerRadius(12)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.appCardBorder, lineWidth: 1)
-            )
-    }
-    
     /// Applies the app's glass effect styling with dark mode support
     func appGlassStyle() -> some View {
         self

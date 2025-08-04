@@ -1,16 +1,5 @@
 import SwiftUI
 
-struct ListElement: Codable, Identifiable, Equatable {
-    let id: UUID
-    var name: String
-    var purchased: Bool
-    init(id: UUID = UUID(), name: String, purchased: Bool = false) {
-        self.id = id
-        self.name = name
-        self.purchased = purchased
-    }
-}
-
 struct ListItemsView: View {
     let list: ListItem
     @Environment(\.dismiss) private var dismiss

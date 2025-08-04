@@ -1,18 +1,6 @@
 import SwiftUI
 import Foundation
 
-// List Model
-struct ListItem: Identifiable, Codable {
-    var id = UUID()
-    let name: String
-    let createdAt: Date
-    
-    init(name: String) {
-        self.name = name
-        self.createdAt = Date()
-    }
-}
-
 struct HomePage: View {
     let user: TempUser
     let onLogout: () -> Void
@@ -802,67 +790,5 @@ struct DeletedSummaryCard: View {
     }
 }
 
-// MARK: - Statistics Cache
 
-struct StatisticsCache {
-    let activeListCount: Int
-    let totalItemsCount: Int
-    let completedItemsCount: Int
-    let overallCompletionRate: Double
-    let listsWithItemsCount: Int
-    let averageItemsPerList: Double
-    
-    // Default initializer for empty state
-    init() {
-        self.activeListCount = 0
-        self.totalItemsCount = 0
-        self.completedItemsCount = 0
-        self.overallCompletionRate = 0
-        self.listsWithItemsCount = 0
-        self.averageItemsPerList = 0
-    }
-    
-    // Custom initializer
-    init(activeListCount: Int, totalItemsCount: Int, completedItemsCount: Int, overallCompletionRate: Double, listsWithItemsCount: Int, averageItemsPerList: Double) {
-        self.activeListCount = activeListCount
-        self.totalItemsCount = totalItemsCount
-        self.completedItemsCount = completedItemsCount
-        self.overallCompletionRate = overallCompletionRate
-        self.listsWithItemsCount = listsWithItemsCount
-        self.averageItemsPerList = averageItemsPerList
-    }
-    
-    static func calculate(from lists: [ListItem]) -> StatisticsCache {
-        var totalItems = 0
-        var completedItems = 0
-        var activeLists = 0
-        var listsWithItems = 0
-        
-        for list in lists {
-            if let data = UserDefaults.standard.data(forKey: "items_\(list.id.uuidString)"),
-               let items = try? JSONDecoder().decode([ListElement].self, from: data) {
-                
-                totalItems += items.count
-                completedItems += items.filter { $0.purchased }.count
-                
-                if !items.isEmpty {
-                    activeLists += 1
-                    listsWithItems += 1
-                }
-            }
-        }
-        
-        let completionRate = totalItems > 0 ? Double(completedItems) / Double(totalItems) : 0
-        let averageItems = lists.count > 0 ? Double(totalItems) / Double(lists.count) : 0
-        
-        return StatisticsCache(
-            activeListCount: activeLists,
-            totalItemsCount: totalItems,
-            completedItemsCount: completedItems,
-            overallCompletionRate: completionRate,
-            listsWithItemsCount: listsWithItems,
-            averageItemsPerList: averageItems
-        )
-    }
-}
 

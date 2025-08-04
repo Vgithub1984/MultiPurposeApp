@@ -183,4 +183,3 @@ struct StatsView: View {
         .background(Color(.systemGroupedBackground))
     }
 }
-
