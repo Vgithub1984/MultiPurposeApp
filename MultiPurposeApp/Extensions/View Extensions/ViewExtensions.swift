@@ -249,4 +249,81 @@ extension View {
     func scrollBlur(blurRadius: CGFloat = 10, blurThreshold: CGFloat = 50) -> some View {
         self.modifier(ScrollBlurModifier(blurRadius: blurRadius, blurThreshold: blurThreshold))
     }
+    
+    /// Applies immersive scroll behavior where content scrolls behind the status bar
+    /// - Parameters:
+    ///   - blurRadius: The radius of the blur effect for status bar area (default: 15)
+    ///   - statusBarHeight: The height of the status bar area (default: 60)
+    /// - Returns: A view with immersive scroll behavior
+    func immersiveScroll(blurRadius: CGFloat = 15, statusBarHeight: CGFloat = 60) -> some View {
+        self.modifier(ImmersiveScrollModifier(blurRadius: blurRadius, statusBarHeight: statusBarHeight))
+    }
+}
+
+// MARK: - Immersive Scroll Modifier for Status Bar Area
+struct ImmersiveScrollModifier: ViewModifier {
+    @State private var scrollOffset: CGFloat = 0
+    let blurRadius: CGFloat
+    let statusBarHeight: CGFloat
+    
+    init(blurRadius: CGFloat = 15, statusBarHeight: CGFloat = 60) {
+        self.blurRadius = blurRadius
+        self.statusBarHeight = statusBarHeight
+    }
+    
+    func body(content: Content) -> some View {
+        content
+            .background(
+                GeometryReader { geometry in
+                    Color.clear
+                        .preference(key: ScrollOffsetPreferenceKey.self, value: geometry.frame(in: .named("immersiveScroll")).minY)
+                }
+            )
+            .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
+                scrollOffset = value
+            }
+            .overlay(
+                VStack {
+                    // Status bar blur overlay - always present when content scrolls up
+                    if scrollOffset < 0 {
+                        Rectangle()
+                            .fill(.ultraThinMaterial)
+                            .blur(radius: blurRadius)
+                            .frame(height: statusBarHeight)
+                            .opacity(min(1.0, abs(scrollOffset) / statusBarHeight))
+                            .allowsHitTesting(false)
+                    }
+                    
+                    Spacer()
+                }
+            )
+    }
+}
+
+// MARK: - Immersive Scroll View
+struct ImmersiveScrollView<Content: View>: View {
+    let content: Content
+    let blurRadius: CGFloat
+    let statusBarHeight: CGFloat
+    let showsIndicators: Bool
+    
+    init(
+        blurRadius: CGFloat = 15,
+        statusBarHeight: CGFloat = 60,
+        showsIndicators: Bool = true,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.blurRadius = blurRadius
+        self.statusBarHeight = statusBarHeight
+        self.showsIndicators = showsIndicators
+        self.content = content()
+    }
+    
+    var body: some View {
+        ScrollView(showsIndicators: showsIndicators) {
+            content
+                .coordinateSpace(name: "immersiveScroll")
+        }
+        .modifier(ImmersiveScrollModifier(blurRadius: blurRadius, statusBarHeight: statusBarHeight))
+    }
 } 

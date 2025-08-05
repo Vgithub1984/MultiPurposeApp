@@ -193,11 +193,5 @@ struct TempUser: Codable {
         password: "Gmail1984"
     )
     
-    /// Additional default user for testing
-    static let `user` = TempUser(
-        firstName: "TempUser",
-        lastName: "Temp",
-        userId: "user@example.com",
-        password: "Pass@1984"
-    )
+
 } 

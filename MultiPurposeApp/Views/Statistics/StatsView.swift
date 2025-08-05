@@ -53,7 +53,7 @@ struct StatsView: View {
     }
 
     var body: some View {
-        ScrollViewWithBlur(blurRadius: 4, blurThreshold: 20) {
+        ImmersiveScrollView(blurRadius: 15, statusBarHeight: 60) {
             VStack(spacing: 20) {
                 VStack(spacing: 8) {
                     Label("Statistics", systemImage: "chart.bar.xaxis")

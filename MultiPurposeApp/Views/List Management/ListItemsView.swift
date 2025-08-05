@@ -89,7 +89,7 @@ struct ListItemsView: View {
                     .onAppear { DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { isInputFocused = true } }
 
                     // Items list
-                    ScrollViewWithBlur(blurRadius: 6, blurThreshold: 40) {
+                    ImmersiveScrollView(blurRadius: 15, statusBarHeight: 60) {
                         LazyVStack(alignment: .leading, spacing: 10) {
                             ForEach(Array(sortedItems.enumerated()), id: \.element.id) { index, item in
                                 HStack(alignment: .center, spacing: 10) {

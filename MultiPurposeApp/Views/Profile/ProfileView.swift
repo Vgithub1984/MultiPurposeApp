@@ -15,7 +15,7 @@ struct ProfileView: View {
     @State private var showAboutSheet = false
 
     var body: some View {
-        ScrollViewWithBlur(blurRadius: 8, blurThreshold: 60) {
+        ImmersiveScrollView(blurRadius: 15, statusBarHeight: 60) {
             VStack(spacing: 24) {
                 VStack(spacing: 16) {
                     VStack(spacing: 12) {
@@ -215,7 +215,7 @@ struct AccountSheet: View {
     
     var body: some View {
         NavigationView {
-            ScrollViewWithBlur(blurRadius: 8, blurThreshold: 60) {
+            ImmersiveScrollView(blurRadius: 15, statusBarHeight: 60) {
                 VStack(spacing: 20) {
                     VStack(spacing: 16) {
                         Image(systemName: "person.circle.fill")
@@ -269,7 +269,7 @@ struct PrivacySheet: View {
     
     var body: some View {
         NavigationView {
-            ScrollViewWithBlur(blurRadius: 8, blurThreshold: 60) {
+            ImmersiveScrollView(blurRadius: 15, statusBarHeight: 60) {
                 VStack(spacing: 20) {
                     VStack(spacing: 16) {
                         Image(systemName: "lock.shield")
@@ -372,7 +372,7 @@ struct NotificationsSheet: View {
     
     var body: some View {
         NavigationView {
-            ScrollViewWithBlur(blurRadius: 8, blurThreshold: 60) {
+            ImmersiveScrollView(blurRadius: 15, statusBarHeight: 60) {
                 VStack(spacing: 20) {
                     VStack(spacing: 16) {
                         Image(systemName: "bell")
@@ -445,7 +445,7 @@ struct StorageSheet: View {
     
     var body: some View {
         NavigationView {
-            ScrollViewWithBlur(blurRadius: 8, blurThreshold: 60) {
+            ImmersiveScrollView(blurRadius: 15, statusBarHeight: 60) {
                 VStack(spacing: 20) {
                     VStack(spacing: 16) {
                         Image(systemName: "externaldrive")
@@ -496,7 +496,7 @@ struct HelpSheet: View {
     
     var body: some View {
         NavigationView {
-            ScrollViewWithBlur(blurRadius: 8, blurThreshold: 60) {
+            ImmersiveScrollView(blurRadius: 15, statusBarHeight: 60) {
                 VStack(spacing: 20) {
                     VStack(spacing: 16) {
                         Image(systemName: "questionmark.circle")
@@ -603,7 +603,7 @@ struct AboutSheet: View {
     
     var body: some View {
         NavigationView {
-            ScrollViewWithBlur(blurRadius: 8, blurThreshold: 60) {
+            ImmersiveScrollView(blurRadius: 15, statusBarHeight: 60) {
                 VStack(spacing: 20) {
                     VStack(spacing: 16) {
                         Image(systemName: "info.circle")
