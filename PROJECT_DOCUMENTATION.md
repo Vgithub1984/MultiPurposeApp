@@ -1,6 +1,6 @@
 # MultiPurposeApp - Technical Documentation
 
-**Last Updated**: August 4, 2025  
+**Last Updated**: August 5, 2025  
 **Version**: 1.0.0 (MVP)
 
 ## Table of Contents
@@ -20,13 +20,15 @@
 **MultiPurposeApp** is a comprehensive iOS application built with SwiftUI that provides list management, user authentication, statistics tracking, and modern iOS 26-style settings interface. The app follows modern iOS development practices with a focus on performance, user experience, and local data management.
 
 ### Key Features
-- **Authentication System**: Secure user registration and login
+- **Authentication System**: Secure user registration and login with session persistence
 - **List Management**: Create, edit, and organize shopping lists
 - **Deleted Lists**: Soft delete with restore functionality
 - **Statistics Dashboard**: Real-time analytics with performance optimization
 - **Modern Settings Interface**: iOS 26-style profile management with detailed sheets
 - **Local Data Management**: Efficient UserDefaults-based storage
 - **Modern UI/UX**: iOS-native design with smooth animations
+- **Advanced Scroll Behavior**: Custom scroll blur effects for enhanced content visibility
+- **App State Management**: Intelligent session persistence and restoration
 
 ### Technical Stack
 - **Frontend**: SwiftUI with Combine
@@ -97,10 +99,10 @@ struct TempUser: Codable {
     let password: String
     
     static let `default` = TempUser(
-        firstName: "Test",
-        lastName: "User",
-        userId: "test@example.com",
-        password: "password"
+        firstName: "Varun",
+        lastName: "Patel",
+        userId: "vickypatel.13@gmail.com",
+        password: "Gmail1984"
     )
 }
 ```
@@ -140,6 +142,8 @@ struct ListElement: Codable, Identifiable, Equatable {
   - User authentication state management
   - Navigation between login and main app
   - Session persistence handling
+  - App state management with intelligent session restoration
+  - Immediate login transitions without loading delays
 
 ### HomePage
 - **Purpose**: Main dashboard with tab-based navigation
@@ -174,6 +178,8 @@ struct ListElement: Codable, Identifiable, Equatable {
   - Performance-optimized calculations
   - Visual progress indicators
   - Activity tracking and trends
+  - Advanced scroll behavior with intelligent blur effects
+  - Optimized content visibility during scrolling
 
 ### DeletedView
 - **Purpose**: Soft-deleted lists management
@@ -269,6 +275,15 @@ extension View {
 }
 ```
 
+#### Advanced Scroll Behavior
+```swift
+struct ScrollViewWithBlur<Content: View>: View {
+    // Custom scroll view with intelligent blur effects
+    // Only shows blur when actively scrolling
+    // Optimized for content visibility
+}
+```
+
 #### Modern iOS 26 Style
 - Clean, card-based design
 - Consistent spacing and typography
@@ -336,4 +351,4 @@ extension View {
 ---
 
 **MultiPurposeApp v1.0.0** - Technical documentation for a comprehensive iOS list management solution with modern UI/UX and local data management.  
-*Last Updated: August 4, 2025* 
+*Last Updated: August 5, 2025* 

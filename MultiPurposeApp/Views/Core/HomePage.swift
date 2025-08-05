@@ -308,7 +308,7 @@ struct HomePage: View {
         }
         
         private var statsTabView: some View {
-            ScrollView {
+            ScrollViewWithBlur(blurRadius: 8, blurThreshold: 60) {
                 StatsView(
                     lists: lists,
                    // activeListCount: activeListCount,

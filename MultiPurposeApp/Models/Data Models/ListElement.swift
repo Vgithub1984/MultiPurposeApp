@@ -185,11 +185,19 @@ struct TempUser: Codable {
     }
     
     // MARK: - Static Properties
-    /// Default test user for development
+    /// Default test users for development
     static let `default` = TempUser(
-        firstName: "Test",
-        lastName: "User",
-        userId: "test@example.com",
-        password: "password"
+        firstName: "Varun",
+        lastName: "Patel",
+        userId: "vickypatel.13@gmail.com",
+        password: "Gmail1984"
+    )
+    
+    /// Additional default user for testing
+    static let `user` = TempUser(
+        firstName: "TempUser",
+        lastName: "Temp",
+        userId: "user@example.com",
+        password: "Pass@1984"
     )
 } 

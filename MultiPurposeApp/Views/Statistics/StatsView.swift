@@ -53,7 +53,7 @@ struct StatsView: View {
     }
 
     var body: some View {
-        ScrollView {
+        ScrollViewWithBlur(blurRadius: 4, blurThreshold: 20) {
             VStack(spacing: 20) {
                 VStack(spacing: 8) {
                     Label("Statistics", systemImage: "chart.bar.xaxis")

@@ -32,7 +32,7 @@ MultiPurposeApp/
 │
 ├── Extensions/                    # Swift extensions and utilities
 │   ├── View Extensions/
-│   │   └── ViewExtensions.swift   # Common view modifiers
+│   │   └── ViewExtensions.swift   # Common view modifiers and scroll behavior
 │   └── Color Extensions/
 │       └── ColorTheme.swift       # Color system and themes
 │
@@ -98,6 +98,7 @@ MultiPurposeApp/
 - **Layout Modifiers**: Positioning and spacing
 - **Animation Modifiers**: Smooth transitions
 - **Accessibility**: Built-in accessibility support
+- **Scroll Behavior**: Custom scroll blur effects and intelligent overlays
 
 ### **Color Extensions**
 - **Dynamic Colors**: Light/dark mode support
@@ -110,6 +111,7 @@ MultiPurposeApp/
 - **Date Utilities**: Date formatting and manipulation
 - **Performance**: Background processing and optimization
 - **Accessibility**: Accessibility label generation
+- **App State Management**: Session persistence and restoration
 
 ## 🚀 Benefits of This Structure
 

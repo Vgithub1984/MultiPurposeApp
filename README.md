@@ -2,7 +2,7 @@
 
 A comprehensive iOS application built with SwiftUI that provides list management, user authentication, statistics tracking, and modern iOS 26-style settings interface.
 
-**Last Updated**: August 4, 2025  
+**Last Updated**: August 5, 2025  
 **Version**: 1.0.0 (MVP)
 
 ## 🚀 Key Features
@@ -10,8 +10,9 @@ A comprehensive iOS application built with SwiftUI that provides list management
 ### **Authentication System**
 - Secure user registration and login
 - Session persistence with UserDefaults
-- Default test user for quick access
-- Animated loading screens during authentication
+- Default test user for quick access (`vickypatel.13@gmail.com` / `Gmail1984`)
+- App state management - remembers last session unless explicitly logged out
+- Immediate login transition without loading delays
 
 ### **List Management**
 - Create, edit, and organize shopping lists
@@ -53,6 +54,8 @@ A comprehensive iOS application built with SwiftUI that provides list management
 - Dark mode support with dynamic color adaptation
 - Accessibility features with proper focus management
 - Glassmorphism effects and gradient backgrounds
+- **Advanced Scroll Behavior**: Custom scroll blur effects for content visibility
+- **Smart Blur System**: Intelligent blur overlays that only appear when scrolling
 
 ## 🏗️ Technical Architecture
 
@@ -99,9 +102,10 @@ A comprehensive iOS application built with SwiftUI that provides list management
 ## 🎯 Usage Guide
 
 ### **Getting Started**
-1. **Launch the app** - You'll see the login screen
-2. **Use default account** - Email: `test@example.com`, Password: `password`
+1. **Launch the app** - You'll see the login screen (or go directly to HomePage if previously logged in)
+2. **Use default account** - Email: `vickypatel.13@gmail.com`, Password: `Gmail1984`
 3. **Or create new account** - Tap "Sign Up" to register
+4. **App remembers your session** - You'll stay logged in until you explicitly log out
 
 ### **Managing Lists**
 1. **Create a list**: Tap the "+" button on the Lists tab
@@ -245,4 +249,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 **MultiPurposeApp v1.0.0** - A comprehensive iOS list management solution with modern UI/UX and local data management.  
-*Last Updated: August 4, 2025* 
+*Last Updated: August 5, 2025* 

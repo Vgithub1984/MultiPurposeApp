@@ -101,9 +101,6 @@ struct ContentView: View {
     /// Holds the currently logged-in user to present the HomePage.
     @State private var loggedInUser: TempUser? = nil
     
-    /// Shows a full screen loading view during login process.
-    @State private var isLoggingIn: Bool = false
-    
     /// Enum for managing focus between authentication form fields.
     enum AuthField: Hashable {
         case firstName, lastName, email, password, confirmPassword
@@ -336,7 +333,6 @@ struct ContentView: View {
                                 // Look for a matching user with correct credentials
                                 if let matchedUser = registeredUsers.first(where: { $0.userId == email && $0.password == password }) {
                                     // Credentials correct - proceed with login
-                                    isLoggingIn = true
                                     showAuthSheet = false
                                     
                                     // Reset input fields for next use
@@ -347,14 +343,14 @@ struct ContentView: View {
                                     // Persist user list changes if any
                                     saveUsers()
                                     
+                                    // Clear the logout flag since user is logging in
+                                    UserDefaults.standard.removeObject(forKey: "userLoggedOut")
+                                    
                                     // Save logged in user for session persistence
                                     saveLoggedInUser(matchedUser)
                                     
-                                    // Simulate loading delay, then transition to HomePage and stop loading
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
-                                        loggedInUser = matchedUser
-                                        isLoggingIn = false
-                                    }
+                                    // Immediately transition to HomePage
+                                    loggedInUser = matchedUser
                                 } else {
                                     // No matching user found or password incorrect
                                     alertMessage = "Incorrect email or password."
@@ -370,6 +366,12 @@ struct ContentView: View {
                                 // Save updated users list to persistent storage
                                 saveUsers()
                                 
+                                // Clear the logout flag since user is signing up
+                                UserDefaults.standard.removeObject(forKey: "userLoggedOut")
+                                
+                                // Save the new user as logged in for session persistence
+                                saveLoggedInUser(newUser)
+                                
                                 // Dismiss sign up sheet on success
                                 showAuthSheet = false
                                 
@@ -381,6 +383,9 @@ struct ContentView: View {
                                 lastName = ""
                                 confirmPassword = ""
                                 showConfirmPassword = false
+                                
+                                // Automatically log in the new user
+                                loggedInUser = newUser
                             }
                         }
                         .buttonStyle(LiquidGlassButtonStyle())
@@ -430,14 +435,13 @@ struct ContentView: View {
             // Load registered users from persistent storage or default user if none saved
             registeredUsers = loadUsers()
             
-            // If a user is already logged in, restore the session and present HomePage
-            if let savedUser = loadLoggedInUser() {
+            // Check if user has explicitly logged out
+            let hasUserLoggedOut = UserDefaults.standard.bool(forKey: "userLoggedOut")
+            
+            // Only restore session if user hasn't explicitly logged out
+            if !hasUserLoggedOut, let savedUser = loadLoggedInUser() {
                 loggedInUser = savedUser
             }
-        }
-        // Full screen loading view presented during login process
-        .fullScreenCover(isPresented: $isLoggingIn) {
-            LoggingInView()
         }
         // Full screen cover presenting HomePage when loggedInUser is set
         .fullScreenCover(item: $loggedInUser, onDismiss: {
@@ -456,11 +460,15 @@ struct ContentView: View {
     // MARK: - Helper functions for saving/loading users
     
     /// Loads the list of registered users from UserDefaults.
-    /// Returns a default user if none are found or decoding fails.
+    /// Returns default user if none are found or decoding fails.
     private func loadUsers() -> [TempUser] {
         guard let data = UserDefaults.standard.data(forKey: "registeredUsers") else {
-            return [TempUser.default]
+            // If no saved users, return default user and save it
+            let defaultUsers = [TempUser.default]
+            saveUsers(defaultUsers)
+            return defaultUsers
         }
+        
         do {
             let decoded = try JSONDecoder().decode([TempUser].self, from: data)
             return decoded.isEmpty ? [TempUser.default] : decoded
@@ -472,9 +480,10 @@ struct ContentView: View {
     
     /// Saves the current registeredUsers array to UserDefaults.
     /// Silent failure on encoding errors.
-    private func saveUsers() {
+    private func saveUsers(_ users: [TempUser]? = nil) {
+        let usersToSave = users ?? registeredUsers
         do {
-            let encoded = try JSONEncoder().encode(registeredUsers)
+            let encoded = try JSONEncoder().encode(usersToSave)
             UserDefaults.standard.set(encoded, forKey: "registeredUsers")
         } catch {
             // Encoding error ignored here
@@ -513,7 +522,10 @@ struct ContentView: View {
     /// Logs out the current user by removing saved session data.
     /// Resets loggedInUser state to nil, which dismisses HomePage.
     private func logout() {
+        // Clear the logged in user session
         UserDefaults.standard.removeObject(forKey: "loggedInUser")
+        // Set a flag to indicate user has explicitly logged out
+        UserDefaults.standard.set(true, forKey: "userLoggedOut")
         loggedInUser = nil
     }
     

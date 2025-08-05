@@ -15,7 +15,7 @@ struct ProfileView: View {
     @State private var showAboutSheet = false
 
     var body: some View {
-        ScrollView {
+        ScrollViewWithBlur(blurRadius: 8, blurThreshold: 60) {
             VStack(spacing: 24) {
                 VStack(spacing: 16) {
                     VStack(spacing: 12) {
@@ -215,7 +215,7 @@ struct AccountSheet: View {
     
     var body: some View {
         NavigationView {
-            ScrollView {
+            ScrollViewWithBlur(blurRadius: 8, blurThreshold: 60) {
                 VStack(spacing: 20) {
                     VStack(spacing: 16) {
                         Image(systemName: "person.circle.fill")
@@ -245,7 +245,7 @@ struct AccountSheet: View {
                 .padding(.top, 0)
             }
             .background(Color.white)
-            .navigationTitle("Account Settings")
+            .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -269,7 +269,7 @@ struct PrivacySheet: View {
     
     var body: some View {
         NavigationView {
-            ScrollView {
+            ScrollViewWithBlur(blurRadius: 8, blurThreshold: 60) {
                 VStack(spacing: 20) {
                     VStack(spacing: 16) {
                         Image(systemName: "lock.shield")
@@ -348,7 +348,7 @@ struct PrivacySheet: View {
                 .padding(.top, 0)
             }
             .background(Color.white)
-            .navigationTitle("Privacy Settings")
+            .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -372,7 +372,7 @@ struct NotificationsSheet: View {
     
     var body: some View {
         NavigationView {
-            ScrollView {
+            ScrollViewWithBlur(blurRadius: 8, blurThreshold: 60) {
                 VStack(spacing: 20) {
                     VStack(spacing: 16) {
                         Image(systemName: "bell")
@@ -407,7 +407,7 @@ struct NotificationsSheet: View {
                 .padding(.top, 0)
             }
             .background(Color.white)
-            .navigationTitle("Notification Settings")
+            .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -445,7 +445,7 @@ struct StorageSheet: View {
     
     var body: some View {
         NavigationView {
-            ScrollView {
+            ScrollViewWithBlur(blurRadius: 8, blurThreshold: 60) {
                 VStack(spacing: 20) {
                     VStack(spacing: 16) {
                         Image(systemName: "externaldrive")
@@ -475,7 +475,7 @@ struct StorageSheet: View {
                 .padding(.top, 0)
             }
             .background(Color.white)
-            .navigationTitle("Storage and Data")
+            .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -496,7 +496,7 @@ struct HelpSheet: View {
     
     var body: some View {
         NavigationView {
-            ScrollView {
+            ScrollViewWithBlur(blurRadius: 8, blurThreshold: 60) {
                 VStack(spacing: 20) {
                     VStack(spacing: 16) {
                         Image(systemName: "questionmark.circle")
@@ -582,7 +582,7 @@ struct HelpSheet: View {
                 .padding(.top, 0)
             }
             .background(Color.white)
-            .navigationTitle("Help & Support")
+            .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -603,7 +603,7 @@ struct AboutSheet: View {
     
     var body: some View {
         NavigationView {
-            ScrollView {
+            ScrollViewWithBlur(blurRadius: 8, blurThreshold: 60) {
                 VStack(spacing: 20) {
                     VStack(spacing: 16) {
                         Image(systemName: "info.circle")
@@ -700,7 +700,7 @@ struct AboutSheet: View {
                 .padding(.top, 0)
             }
             .background(Color.white)
-            .navigationTitle("About MultiPurposeApp")
+            .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
